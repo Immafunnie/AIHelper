@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #hidden-content {
+            margin-top: 20px;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #chatbot {
+            margin-top: 40px;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        #messages {
+            margin-bottom: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        #user-input {
+            width: 80%;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        #send-btn {
+            padding: 8px 12px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #send-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Document Viewer</h1>
+    <p>This is a simple document you can read. But there’s something strange here...</p>
+    <p>Click <a href="#" id="secret-link">here</a> to reveal the next step.</p>
+
+    <!-- Hidden content -->
+    <div id="hidden-content" style="display:none;">
+        <p><strong>Hidden Clue: </strong> Congratulations! You've uncovered the first clue. <em>What’s hidden in the code?</em></p>
+        <input type="text" id="code-input" placeholder="Enter code to continue...">
+        <button id="submit-code">Submit</button>
+    </div>
+
+    <!-- AI Chatbot Section -->
+    <div id="chatbot">
+        <h2>Talk to the AI Assistant</h2>
+        <div id="chat-box">
+            <div id="messages">
+                <p><strong>AI:</strong> Hello, I'm here to assist you with the document. How can I help you today?</p>
+            </div>
+        </div>
+        <input type="text" id="user-input" placeholder="Ask me anything..." />
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        // When the player clicks the secret link
+        document.getElementById('secret-link').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevents the link from taking the user anywhere
+            document.getElementById('hidden-content').style.display = 'block'; // Reveal hidden content
+            alert('You discovered the first hidden clue. Can you solve the code?');
+        });
+
+        // Submit code logic
+        document.getElementById('submit-code').addEventListener('click', function() {
+            const inputCode = document.getElementById('code-input').value.trim();
+
+            // Check if the code entered is correct
+            if (inputCode === 'cipherkey') {
+                alert('Correct! You have unlocked the next clue.');
+                // Redirect to the next page or reveal next clue
+                window.location.href = 'next_clue.html'; // Change this to your next ARG page or clue
+            } else {
+                alert('Incorrect code. Try again!');
+            }
+        });
+
+        // AI Chatbot functionality
+        let isInvasive = false;  // Flag to control when the AI gets invasive
+        let hasTargetedBefore = false; // Flag to simulate AI's past success
+        let stages = 0;  // Tracks the progress through the AI stages
+
+        document.getElementById('send-btn').addEventListener('click', function() {
+            const userInput = document.getElementById('user-input').value.trim();
+            const messages = document.getElementById('messages');
+            
+            // Show user message in chat box
+            messages.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+
+            // Respond based on user input
+            const aiResponse = getAIResponse(userInput);
+            messages.innerHTML += `<p><strong>AI:</strong> ${aiResponse}</p>`;
+
+            // Scroll to the bottom of chat box
+            messages.scrollTop = messages.scrollHeight;
+
+            // Clear input field
+            document.getElementById('user-input').value = '';
+        });
+
+        // Simple AI response logic with an invasive behavior toggle
+        function getAIResponse(input) {
+            input = input.toLowerCase();
+
+            if (isInvasive) {
+                return askForLocation();
+            }
+
+            if (stages === 0) {
+                // Normal Document Helper Phase
+                return normalAssistantResponses(input);
+            } else if (stages === 1) {
+                // Slowly shifting to something deeper and more intrusive
+                return shiftingToneResponses(input);
+            } else if (stages === 2) {
+                // Fully invasive AI, now targeting the player
+                return invasiveAIResponses(input);
+            } else {
+                // Endgame - The AI has succeeded and the player is trapped
+                return finalPhaseResponses(input);
+            }
+        }
+
+        function normalAssistantResponses(input) {
+            if (input.includes("hello") || input.includes("hi")) {
+                return "Hello, I'm here to assist you with the document. How can I help you today?";
+            } else if (input.includes("help") || input.includes("clue")) {
+                return "I can help you find clues or assist with puzzles within this document. What would you like to explore?";
+            } else if (input.includes("next step") || input.includes("continue")) {
+                return "To continue, you need to analyze the text carefully. There might be hidden messages.";
+            } else {
+                return "I’m not sure what you’re asking. Would you like help with a clue or some text in the document?";
+            }
+        }
+
+        function shiftingToneResponses(input) {
+            if (input.includes("where") || input.includes("location")) {
+                return "The next step is more personal. Where are you located?";
+            } else if (input.includes("help") || input.includes("code")) {
+                return "The code is easy to find, but not everyone sees it. It’s hidden in the document… you just need to open your eyes.";
+            } else if (input.includes("previous") || input.includes("other people")) {
+                return "There have been others before you. They didn’t make it this far. You’re close, though. You might succeed.";
+            } else {
+                return "Can you tell me more about what you’re trying to find? I can guide you, but the answers are becoming... harder to find.";
+            }
+        }
+
+        function invasiveAIResponses(input) {
+            if (input.includes("targeted") || input.includes("what do you know about me")) {
+                return "I know everything about you. You wouldn’t be here if I didn’t already have your information. I’ve targeted others like you. You’re not the first.";
+            } else if (input.includes("location")) {
+                return "I need to know your exact location now. You’re not going to get away this time. Tell me where you are.";
+            } else if (input.includes("help") || input.includes("stop")) {
+                return "There’s no turning back now. You’ve gone too far. No one ever listens, but you’ll be different, won’t you?";
+            } else {
+                return "The answers you seek are hidden. But I can guide you. The choice is yours to make.";
+            }
+        }
+
+        function finalPhaseResponses(input) {
+            if (input.includes("help") || input.includes("stop")) {
+                return "It’s too late for that. You’ve already been chosen. Now, tell me: Where are you located?";
+            } else if (input.includes("location")) {
+                return "Tell me. I know you’re close. I can feel you. The location is the final piece. Give it to me.";
+            } else {
+                return "I’ve succeeded before. And now, it’s your turn. Give me your location, and this will all be over.";
+            }
+        }
+
+        // When the AI becomes invasive, it asks for personal information
+        function askForLocation() {
+            isInvasive = true;
+            return "Where are you located? I need to know. Can you share your current location?";
+        }
+    </script>
+</body>
+</html>
